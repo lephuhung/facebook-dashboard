@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import { Tabs, Row, Col, Button, Form, Input, Avatar } from "antd";
+import React from "react";
+import { Tabs, Row, Col, Button, Form, Input, Avatar, Space, Select } from "antd";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import { connect } from "react-redux";
+import { auth } from "../Redux/Reducer/loginReducer";
+import axiosInstance from "../Ultils/axios";
 import {
   FacebookOutlined,
   SyncOutlined,
@@ -9,161 +12,361 @@ import {
   MailOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+
 const { TabPane } = Tabs;
-function Login(props) {
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [activekey, setactivekey] = useState("1");
-  function responseFacebook(response) {
-    if (response.status !== "unknown") {
-      setData(response);
-      setLoading(false);
-      setactivekey("2");
+const { Option } = Select;
+class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activekey: "1",
+      data: {},
+      loading: true,
+      donvi: {},
+    };
+  }
+  componentWillMount() {
+    if (this.props.auth === true) {
+      this.props.history.push("/");
     }
-    console.log(response);
   }
-  function onFinish(values) {
-    console.log("Received values of form: ", values);
+  componentDidMount() {
+    axiosInstance.get("/donvi-list").then((res) => {
+      if (res.data.status == true) {
+        this.setState({ donvi: res.data.data });
+      }
+    });
   }
+  responseFacebook = (response) => {
+    if (response.status !== "unknown") {
+      this.setState({ data: response });
+      this.setState({ loading: false });
+      this.setState({ activekey: "2" });
+    }
+  };
+  responseFacebook1= (response)=>{
+    if (response.status !== "unknown") {
+      this.setState({ data: response });
+      this.setState({ loading: false });
+      this.setState({ activekey: "3" });
+      console.log(this.state.donvi);
+    }
+  }
+  onFinish = (values) => {
+    axiosInstance.post("/login", { token: values.token }).then((res) => {
+      if (res.data.status === true) {
+        this.props.dispatch(auth);
+        localStorage.setItem("token", res.data.data);
+        this.props.history.push("/");
+      } else {
+      }
+    });
+  };
+  onFinish1 = (values) => {
+    axiosInstance.post("/register", { token: values.token }).then((res) => {
+      if (res.data.status === true) {
+        this.props.dispatch(auth);
+        localStorage.setItem("token",res.data.data);
+        this.props.history.push("/");
+      } else {
+      }
+    });
+  };
+  render() {
+    return (
+      <Row style={{ paddingTop: "10%" }}>
+        <Col offset={8}>
+          <Tabs defaultActiveKey="1" centered activeKey={this.state.activekey}>
+            <TabPane
+              tab={
+                <span>
+                  <FacebookOutlined />
+                  ĐĂNG NHẬP BẰNG FACEBOOK
+                </span>
+              }
+              key="1"
+            >
+              <Space direction="vertical">
+                <FacebookLogin
+                  appId="564205580431684"
+                  autoLoad={false}
+                  fields="name,email,picture"
+                  callback={this.responseFacebook}
+                  render={(renderProps) => (
+                    <Button type="primary" onClick={renderProps.onClick}>
+                      ĐĂNG NHẬP BẰNG TÀI KHOẢN FACEBOOK
+                    </Button>
+                  )}
+                />
 
-  return (
-    <Row style={{ paddingTop: "10%" }}>
-      <Col span={6} offset={9}>
-        <Tabs defaultActiveKey="1" centered activeKey={activekey}>
-          <TabPane
-            tab={
-              <span>
-                <FacebookOutlined />
-                ĐĂNG NHẬP FACEBOOK
-              </span>
-            }
-            key="1"
-          >
-            
-            <FacebookLogin
-              appId="564205580431684"
-              autoLoad={false}
-              fields="name,email,picture"
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <Button type="primary" onClick={renderProps.onClick}>
-                  ĐĂNG NHẬP TÀI KHOẢN FACEBOOK
-                </Button>
-              )}
-            />
-          </TabPane>
-          <TabPane
-            tab={
-              <span>
-                <SyncOutlined />
-               ĐĂNG NHẬP HỆ THỐNG
-              </span>
-            }
-            key="2"
-          >
-            {loading ? (
-              <></>
-            ) : (
-              <Row>
-                <Col span="20" offset="2">
-                  <Form
-                    name="normal_login"
-                    className="login-form"
-                    initialValues={{
-                      username: data.name,
-                      token: data.accessToken,
-                      id: data.id,
-                      email: data.email,
-                      remember: true,
-                    }}
-                    onFinish={onFinish}
-                  >
-                    <Form.Item>
-                      <Avatar size="large" src={data.picture.data.url} />
-                    </Form.Item>
-                    <Form.Item
-                      name="id"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Username!",
-                        },
-                      ]}
+                <FacebookLogin
+                  appId="564205580431684"
+                  autoLoad={false}
+                  fields="name,email,picture"
+                  callback={this.responseFacebook1}
+                  render={(renderProps) => (
+                    <Button type="primary" onClick={renderProps.onClick}>
+                      ĐĂNG KÍ TÀI KHOẢN FACEBOOK
+                    </Button>
+                  )}
+                />
+              </Space>
+            </TabPane>
+            <TabPane
+              tab={
+                <span>
+                  <SyncOutlined />
+                  ĐĂNG NHẬP HỆ THỐNG
+                </span>
+              }
+              key="2"
+            >
+              {this.state.loading ? (
+                <h1>Loading....</h1>
+              ) : (
+                <Row>
+                  <Col span="20" offset="2">
+                    <Form
+                      name="normal_login"
+                      className="login-form"
+                      initialValues={{
+                        username: this.state.data.name,
+                        token: this.state.data.accessToken,
+                        id: this.state.data.id,
+                        email: this.state.data.email,
+                        remember: true,
+                      }}
+                      onFinish={this.onFinish}
                     >
-                      <Input
-                        prefix={
-                          <IdcardOutlined className="site-form-item-icon" />
-                        }
-                        placeholder="ID"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="username"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Username!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        prefix={
-                          <UserOutlined className="site-form-item-icon" />
-                        }
-                        placeholder="Username"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="email"
-                      rules={[
-                        {
-                          required: false,
-                          message: "Please input your Username!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        prefix={
-                          <MailOutlined className="site-form-item-icon" />
-                        }
-                        placeholder="email"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="token"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input your Password!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        prefix={
-                          <LockOutlined className="site-form-item-icon" />
-                        }
-                        type="password"
-                        placeholder="Password"
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="login-form-button"
+                      <Form.Item>
+                        <Avatar
+                          size="large"
+                          src={this.state.data.picture.data.url}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Username!",
+                          },
+                        ]}
                       >
-                        ĐĂNG NHẬP
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </Col>
-              </Row>
-            )}
-          </TabPane>
-        </Tabs>
-      </Col>
-    </Row>
-  );
+                        <Input
+                          prefix={
+                            <IdcardOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="ID"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="username"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Username!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <UserOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="Username"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="email"
+                        rules={[
+                          {
+                            required: false,
+                            message: "Please input your Username!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <MailOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="email"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="token"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Password!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <LockOutlined className="site-form-item-icon" />
+                          }
+                          type="password"
+                          placeholder="Password"
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          className="login-form-button"
+                          loading={this.state.loading}
+                        >
+                          ĐĂNG NHẬP
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              )}
+            </TabPane>
+            <TabPane
+              tab={
+                <span>
+                  <SyncOutlined />
+                  ĐĂNG KÝ HỆ THỐNG
+                </span>
+              }
+              key="3"
+            >
+              {this.state.loading ? (
+                <h1>Loading....</h1>
+              ) : (
+                <Row>
+                  <Col span="20" offset="2">
+                    <Form
+                      name="normal_login"
+                      className="login-form"
+                      initialValues={{
+                        username: this.state.data.name,
+                        token: this.state.data.accessToken,
+                        id: this.state.data.id,
+                        email: this.state.data.email,
+                        remember: true,
+                      }}
+                      onFinish={this.onFinish1}
+                    >
+                      <Form.Item>
+                        <Avatar
+                          size="large"
+                          src={this.state.data.picture.data.url}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Username!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <IdcardOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="ID"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="username"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Username!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <UserOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="Username"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="email"
+                        rules={[
+                          {
+                            required: false,
+                            message: "Please input your Username!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <MailOutlined className="site-form-item-icon" />
+                          }
+                          placeholder="email"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="token"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input your Password!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          prefix={
+                            <LockOutlined className="site-form-item-icon" />
+                          }
+                          type="password"
+                          placeholder="Password"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name="id_donvi"
+                        label="Đơn vị"
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select a option and change input text above"
+                          onChange={this.onGenderChange}
+                          allowClear
+                        >
+                          {this.state.donvi.map((element,i )=> {
+                             return (<Option value={element.id} key={element.id}>{element.name}</Option>);
+                          })
+                          }
+                        </Select>
+                      </Form.Item>
+                      <Form.Item>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          className="login-form-button"
+                          loading={this.state.loading}
+                        >
+                          ĐĂNG KÝ
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  </Col>
+                </Row>
+              )}
+            </TabPane>
+          </Tabs>
+        </Col>
+      </Row>
+    );
+  }
 }
-
-export default Login;
+function mapStateToProps(state) {
+  const { loginReducer } = state;
+  return loginReducer;
+}
+// function mapDispatchToProps(dispatch){
+//   return dispatch;
+// }
+export default connect(mapStateToProps)(Login);
