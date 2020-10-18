@@ -73,7 +73,7 @@ class Login extends React.Component {
    * @param {giá trị form} values 
    */
   onRegister = (values) => {
-    axiosInstance.post("/register", { token: values.token, id_donvi:values. id_donvi }).then((res) => {
+    axiosInstance.post("/register", { token: values.token, id_donvi:values.id_donvi }).then((res) => {
       if (res.data.status === true) {
         this.props.authlogin();
         localStorage.setItem("token",res.data.data);

@@ -1,16 +1,28 @@
-import React from "react";
-import { ReactTinyLink } from "react-tiny-link";
+import React, { useState, useEffect } from "react";
 import { LinkOutlined } from "@ant-design/icons";
-import { Card, Col, Row, Form, Input, Button, Space } from "antd";
+import {
+  Col,
+  Row,
+  Form,
+  Input,
+  Button,
+  Space,
+  Typography,
+  message,
+  List,
+} from "antd";
 import "./dashboard.css";
-import { getLinkPreview } from "link-preview-js";
 import axiosInstance from "../Ultils/axios";
-
+import "./dashboard.css";
+const { Text, Title } = Typography;
 const validateMessages = {
   required: "Link không được đê trống",
 };
 function Dashboard(props) {
   const [form] = Form.useForm();
+  const [data, setData] = useState([]);
+  const [count, setCount] = useState(0);
+  const [hidden, setHidden]= useState(true);
   const onFinish = (values) => {
     axiosInstance
       .post(
@@ -20,17 +32,29 @@ function Dashboard(props) {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       )
-      .then((res) => console.log(res.data));
+      .then((res) => {
+        if (res.data.status == true) {
+        } else {
+          message.error(" Upload khong thafnh coong");
+        }
+      });
   };
   const onReset = () => {
     form.resetFields();
   };
-
+  useEffect(() => {
+    axiosInstance.get("/facebook-post").then((res) => {
+      if (res.data.status == true) {
+        setData(res.data.data);
+        setHidden(false);
+      } else {
+        message.error("Truy vấn dữ liệu không thành công");
+      }
+    });
+  });
   return (
     <div className="App">
-      <h1 style={{ paddingTop: "10px" }}>
-        HỆ THỐNG THEO DÕI XU HƯỚNG MẠNG XÃ HỘI
-      </h1>
+      <Title strong>HỆ THỐNG THEO DÕI XU HƯỚNG MẠNG XÃ HỘI</Title>
 
       <Row>
         <Col offset={6} span={12}>
@@ -80,7 +104,19 @@ function Dashboard(props) {
           </Form>
         </Col>
       </Row>
-      <Row gutter={16} style={{ padding: "20px" }}></Row>
+      <Row gutter={16} style={{ padding: "20px", width:'100%' }} hidden={true}>
+        <List
+          header={<div>Danh sách bài viết gần đây</div>}
+          footer={<div>{`Tổng bài viết đã gửi ${count}`}</div>}
+          bordered
+          dataSource={data}
+          renderItem={(item) => (
+            <List.Item>
+              <Typography.Text mark>[ITEM]</Typography.Text> {item}
+            </List.Item>
+          )}
+        />
+      </Row>
     </div>
   );
 }
