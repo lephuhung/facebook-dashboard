@@ -28,8 +28,8 @@ const AuthReducer = createSlice({
     loadingProfile: true,
   },
   reducers: {
-    auth(state, action) {
-      state = { ...state, auth: true };
+    authlogin(state, action) {
+      state.auth=true;
     },
   },
   extraReducers: {
@@ -75,4 +75,4 @@ const AuthReducer = createSlice({
   },
 });
 export default AuthReducer.reducer;
-export const { auth } = AuthReducer.actions;
+export const { authlogin } = AuthReducer.actions;

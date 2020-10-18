@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs, Row, Col, Button, Form, Input, Avatar, Space, Select } from "antd";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { connect } from "react-redux";
-import { auth } from "../Redux/Reducer/loginReducer";
+import { authlogin } from "../Redux/Reducer/loginReducer";
 import axiosInstance from "../Ultils/axios";
 import {
   FacebookOutlined,
@@ -32,7 +32,7 @@ class Login extends React.Component {
   }
   componentDidMount() {
     axiosInstance.get("/donvi-list").then((res) => {
-      if (res.data.status == true) {
+      if (res.data.status === true) {
         this.setState({ donvi: res.data.data });
       }
     });
@@ -52,20 +52,30 @@ class Login extends React.Component {
       console.log(this.state.donvi);
     }
   }
-  onFinish = (values) => {
+  /**
+   * Hàm login đăng nhập hệ thống
+   * @param {giá trị của form} values 
+   */
+  onLogin = (values) => {
     axiosInstance.post("/login", { token: values.token }).then((res) => {
       if (res.data.status === true) {
-        this.props.dispatch(auth);
+        this.props.authlogin();
         localStorage.setItem("token", res.data.data);
         this.props.history.push("/");
       } else {
       }
     });
+   
+    
   };
-  onFinish1 = (values) => {
-    axiosInstance.post("/register", { token: values.token }).then((res) => {
+  /**
+   * Hàm đăng kí hệ thống
+   * @param {giá trị form} values 
+   */
+  onRegister = (values) => {
+    axiosInstance.post("/register", { token: values.token, id_donvi:values. id_donvi }).then((res) => {
       if (res.data.status === true) {
-        this.props.dispatch(auth);
+        this.props.authlogin();
         localStorage.setItem("token",res.data.data);
         this.props.history.push("/");
       } else {
@@ -93,7 +103,7 @@ class Login extends React.Component {
                   fields="name,email,picture"
                   callback={this.responseFacebook}
                   render={(renderProps) => (
-                    <Button type="primary" onClick={renderProps.onClick}>
+                    <Button type="primary" onClick={renderProps.onClick} block>
                       ĐĂNG NHẬP BẰNG TÀI KHOẢN FACEBOOK
                     </Button>
                   )}
@@ -105,7 +115,7 @@ class Login extends React.Component {
                   fields="name,email,picture"
                   callback={this.responseFacebook1}
                   render={(renderProps) => (
-                    <Button type="primary" onClick={renderProps.onClick}>
+                    <Button type="primary" onClick={renderProps.onClick} block>
                       ĐĂNG KÍ TÀI KHOẢN FACEBOOK
                     </Button>
                   )}
@@ -136,7 +146,7 @@ class Login extends React.Component {
                         email: this.state.data.email,
                         remember: true,
                       }}
-                      onFinish={this.onFinish}
+                      onFinish={this.onLogin}
                     >
                       <Form.Item>
                         <Avatar
@@ -248,7 +258,7 @@ class Login extends React.Component {
                         email: this.state.data.email,
                         remember: true,
                       }}
-                      onFinish={this.onFinish1}
+                      onFinish={this.onRegister}
                     >
                       <Form.Item>
                         <Avatar
@@ -331,7 +341,7 @@ class Login extends React.Component {
                         ]}
                       >
                         <Select
-                          placeholder="Select a option and change input text above"
+                          placeholder="Lựa chọn đơn vị"
                           onChange={this.onGenderChange}
                           allowClear
                         >
@@ -366,7 +376,5 @@ function mapStateToProps(state) {
   const { loginReducer } = state;
   return loginReducer;
 }
-// function mapDispatchToProps(dispatch){
-//   return dispatch;
-// }
-export default connect(mapStateToProps)(Login);
+const mapDispatch = { authlogin }
+export default connect(mapStateToProps, mapDispatch)(Login);
