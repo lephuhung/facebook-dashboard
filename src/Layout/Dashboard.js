@@ -9,7 +9,7 @@ import {
   Space,
   Typography,
   message,
-  List,
+  Card,
 } from "antd";
 import "./dashboard.css";
 import axiosInstance from "../Ultils/axios";
@@ -22,7 +22,7 @@ function Dashboard(props) {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
-  const [hidden, setHidden]= useState(true);
+  const [hidden, setHidden] = useState(true);
   const onFinish = (values) => {
     axiosInstance
       .post(
@@ -43,15 +43,20 @@ function Dashboard(props) {
     form.resetFields();
   };
   useEffect(() => {
-    axiosInstance.get("/facebook-post").then((res) => {
-      if (res.data.status == true) {
-        setData(res.data.data);
-        setHidden(false);
-      } else {
-        message.error("Truy vấn dữ liệu không thành công");
-      }
-    });
-  });
+    axiosInstance
+      .get("/top10posts", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        if (res.data.status == true) {
+          //console.log(res.data.data)
+          setData(res.data.data);
+          setHidden(false);
+        } else {
+          message.error("Truy vấn dữ liệu không thành công");
+        }
+      });
+  }, []);
   return (
     <div className="App">
       <Title strong>HỆ THỐNG THEO DÕI XU HƯỚNG MẠNG XÃ HỘI</Title>
@@ -104,18 +109,20 @@ function Dashboard(props) {
           </Form>
         </Col>
       </Row>
-      <Row gutter={16} style={{ padding: "20px", width:'100%' }} hidden={true}>
-        <List
-          header={<div>Danh sách bài viết gần đây</div>}
-          footer={<div>{`Tổng bài viết đã gửi ${count}`}</div>}
-          bordered
-          dataSource={data}
-          renderItem={(item) => (
-            <List.Item>
-              <Typography.Text mark>[ITEM]</Typography.Text> {item}
-            </List.Item>
-          )}
-        />
+      <Row
+        gutter={[16, 16]}
+        style={{ padding: "20px", width: "100%" }}
+        hidden={hidden}
+      >
+        {data.map((index) => {
+          return (
+            <Col span={8}>
+              <Card title="Card title" bordered={false}>
+                {index.url}
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
     </div>
   );
