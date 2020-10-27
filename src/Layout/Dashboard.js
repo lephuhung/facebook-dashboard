@@ -10,20 +10,23 @@ import {
   Typography,
   message,
   Card,
+  Tooltip,
 } from "antd";
 import "./dashboard.css";
 import axiosInstance from "../Ultils/axios";
 import "./dashboard.css";
-const { Text, Title } = Typography;
+const { Title } = Typography;
 const validateMessages = {
   required: "Link không được đê trống",
 };
 function Dashboard(props) {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
-  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [reload, setReload]= useState(false);
   const [hidden, setHidden] = useState(true);
   const onFinish = (values) => {
+    setLoading(true);
     axiosInstance
       .post(
         "/facebook-post",
@@ -33,9 +36,12 @@ function Dashboard(props) {
         }
       )
       .then((res) => {
+        setLoading(false);
         if (res.data.status == true) {
+          message.success("Upload thành công");
+          setReload(!reload);
         } else {
-          message.error(" Upload khong thafnh coong");
+          message.error("Upload không thành công");
         }
       });
   };
@@ -56,7 +62,7 @@ function Dashboard(props) {
           message.error("Truy vấn dữ liệu không thành công");
         }
       });
-  }, []);
+  }, [reload]);
   return (
     <div className="App">
       <Title strong>HỆ THỐNG THEO DÕI XU HƯỚNG MẠNG XÃ HỘI</Title>
@@ -96,11 +102,11 @@ function Dashboard(props) {
                     type="primary"
                     htmlType="submit"
                     onClick={onReset}
-                    block
+                    
                   >
-                    Reset
+                    Reset link
                   </Button>
-                  <Button type="primary" htmlType="submit" block>
+                  <Button type="primary" htmlType="submit" loading={loading}>
                     Đăng bài
                   </Button>
                 </Space>
@@ -109,20 +115,29 @@ function Dashboard(props) {
           </Form>
         </Col>
       </Row>
-      <Row
-        gutter={[16, 16]}
-        style={{ padding: "20px", width: "100%" }}
-        hidden={hidden}
-      >
-        {data.map((index) => {
-          return (
-            <Col span={8}>
-              <Card title="Card title" bordered={false}>
-                {index.url}
-              </Card>
-            </Col>
-          );
-        })}
+      <Typography.Title level={2}>10 bài viết gần đây</Typography.Title>
+      <Row style={{ paddingTop: "20px", width: "100%" }} hidden={hidden}>
+       
+        <Col span={12} offset={6}>
+          <Row gutter={[16, 16]}>
+            {data.map((index, i) => {
+              return (
+                <Col span={8}>
+                  <Card type="inner" title={index.providerName} bordered={true} key={i}>
+                    <Space direction="vertical">
+                      <Tooltip>{index.content!=null?index.content:'Không có nội dung'}</Tooltip>
+                      <Tooltip placement="topLeft" title={index.url}>
+                        <a href={index.url} target="_blank">
+                          Link bài viết
+                        </a>
+                      </Tooltip>
+                    </Space>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        </Col>
       </Row>
     </div>
   );
