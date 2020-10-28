@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/facebook-dashboard/static/css/main.d2646a32.chunk.css",
+    "main.js": "/facebook-dashboard/static/js/main.59b417de.chunk.js",
+    "main.js.map": "/facebook-dashboard/static/js/main.59b417de.chunk.js.map",
+    "runtime-main.js": "/facebook-dashboard/static/js/runtime-main.990e496b.js",
+    "runtime-main.js.map": "/facebook-dashboard/static/js/runtime-main.990e496b.js.map",
+    "static/css/2.4c4477be.chunk.css": "/facebook-dashboard/static/css/2.4c4477be.chunk.css",
+    "static/js/2.d3bfab22.chunk.js": "/facebook-dashboard/static/js/2.d3bfab22.chunk.js",
+    "static/js/2.d3bfab22.chunk.js.map": "/facebook-dashboard/static/js/2.d3bfab22.chunk.js.map",
+    "index.html": "/facebook-dashboard/index.html",
+    "precache-manifest.84f2fceca9965906732a4e06a09c7e2f.js": "/facebook-dashboard/precache-manifest.84f2fceca9965906732a4e06a09c7e2f.js",
+    "service-worker.js": "/facebook-dashboard/service-worker.js",
+    "static/css/2.4c4477be.chunk.css.map": "/facebook-dashboard/static/css/2.4c4477be.chunk.css.map",
+    "static/css/main.d2646a32.chunk.css.map": "/facebook-dashboard/static/css/main.d2646a32.chunk.css.map",
+    "static/js/2.d3bfab22.chunk.js.LICENSE.txt": "/facebook-dashboard/static/js/2.d3bfab22.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.990e496b.js",
+    "static/css/2.4c4477be.chunk.css",
+    "static/js/2.d3bfab22.chunk.js",
+    "static/css/main.d2646a32.chunk.css",
+    "static/js/main.59b417de.chunk.js"
+  ]
+}
