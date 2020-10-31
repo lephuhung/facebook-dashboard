@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/facebook-dashboard/static/css/main.d2646a32.chunk.css",
-    "main.js": "/facebook-dashboard/static/js/main.785fea0f.chunk.js",
-    "main.js.map": "/facebook-dashboard/static/js/main.785fea0f.chunk.js.map",
+    "main.js": "/facebook-dashboard/static/js/main.a5151dae.chunk.js",
+    "main.js.map": "/facebook-dashboard/static/js/main.a5151dae.chunk.js.map",
     "runtime-main.js": "/facebook-dashboard/static/js/runtime-main.990e496b.js",
     "runtime-main.js.map": "/facebook-dashboard/static/js/runtime-main.990e496b.js.map",
     "static/css/2.4c4477be.chunk.css": "/facebook-dashboard/static/css/2.4c4477be.chunk.css",
     "static/js/2.d3bfab22.chunk.js": "/facebook-dashboard/static/js/2.d3bfab22.chunk.js",
     "static/js/2.d3bfab22.chunk.js.map": "/facebook-dashboard/static/js/2.d3bfab22.chunk.js.map",
     "index.html": "/facebook-dashboard/index.html",
-    "precache-manifest.30bdf588ca59b561f75066e95e86b0d4.js": "/facebook-dashboard/precache-manifest.30bdf588ca59b561f75066e95e86b0d4.js",
+    "precache-manifest.2bdc501d087cbe99914637c5fecccd60.js": "/facebook-dashboard/precache-manifest.2bdc501d087cbe99914637c5fecccd60.js",
     "service-worker.js": "/facebook-dashboard/service-worker.js",
     "static/css/2.4c4477be.chunk.css.map": "/facebook-dashboard/static/css/2.4c4477be.chunk.css.map",
     "static/css/main.d2646a32.chunk.css.map": "/facebook-dashboard/static/css/main.d2646a32.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.4c4477be.chunk.css",
     "static/js/2.d3bfab22.chunk.js",
     "static/css/main.d2646a32.chunk.css",
-    "static/js/main.785fea0f.chunk.js"
+    "static/js/main.a5151dae.chunk.js"
   ]
 }
