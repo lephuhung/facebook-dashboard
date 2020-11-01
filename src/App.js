@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import "./App.css";
 import Login from "./Layout/Login";
 import Dashboard from "./Layout/Dashboard";
+import NoMatch from "./Layout/NoMatch";
 import { BrowserRouter as Browser, Switch, Route } from "react-router-dom";
 import "antd/dist/antd.css";
 import ProtectRoute from "./Layout/ProtectRoute";
@@ -19,10 +20,11 @@ function App() {
         {loadingProfile ? (
           <div>Loading....</div>
         ) : (
-      <Browser basename='/'>
+      <Browser basename='/facebook-dashboard'>
           <Switch>
-            <ProtectRoute path="" exact component={Dashboard} auth={auth} />
-            <Route path="login" component={(props) => <Login {...props} />} />
+            <ProtectRoute path="/" exact component={Dashboard} auth={auth} />
+            <Route path="/login" component={(props) => <Login {...props} />} />
+            <Route component={NoMatch}/>
           </Switch>
       </Browser>
         )}
