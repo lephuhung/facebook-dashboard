@@ -19,10 +19,10 @@ function App() {
         {loadingProfile ? (
           <div>Loading....</div>
         ) : (
-      <Browser>
+      <Browser basename='/'>
           <Switch>
-            <ProtectRoute path="/" exact component={Dashboard} auth={auth} />
-            <Route path="/login" component={(props) => <Login {...props} />} />
+            <ProtectRoute path="" exact component={Dashboard} auth={auth} />
+            <Route path="login" component={(props) => <Login {...props} />} />
           </Switch>
       </Browser>
         )}
